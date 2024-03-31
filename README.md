@@ -1,0 +1,2 @@
+# PugglePuzzles
+Daily puzzle generator
