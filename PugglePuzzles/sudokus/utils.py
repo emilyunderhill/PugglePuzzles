@@ -10,7 +10,7 @@ def generate():
 
     boardIsComplete = False
 
-    while boardIsComplete == False:
+    while not boardIsComplete:
         fillBoard(board)
         boardIsComplete = isBoardComplete(board)
 
@@ -18,8 +18,8 @@ def generate():
 
     initialBoard = removeNumbers(board)
     initialValues = [[cell.value for cell in row] for row in initialBoard]
-    print('Initial values: ', initialValues)
     print('Solution values: ', solutionValues)
+    print('Initial values: ', initialValues)
 
 def fillBoard(board: list[list[Cell]]) -> None:
     for x in range(9):
@@ -157,40 +157,6 @@ def isBoardSolvable(board: list[list[Cell]]) -> bool:
 
     return isBoardComplete(newBoard)
 
-
-
-def checkPossibleValues(board: list[list[Cell]], row: int, col: int, hasChanges: bool) -> bool:
-    possibleValues = board[row][col].possibleValues
-    # Check row
-    duplicatePossibleValues = []
-    i = 0
-    for cell in board[row]:
-        if (i == col):
-            i += 1
-            continue
-
-        if (cell.possibleValues == possibleValues):
-            duplicatePossibleValues.append(i)
-
-        i += 1
-
-    if (len(possibleValues) == len(duplicatePossibleValues)):
-        i = 0
-        for cell in board[row]:
-            if (i in duplicatePossibleValues):
-                i += 1
-                continue
-
-            for possibleVal in possibleValues:
-                if (possibleVal in cell.possibleValues):
-                    cell.possibleValues.remove(possibleVal)
-                    hasChanges = True
-                    if (len(cell.possibleValues) == 1):
-                        cell.value = cell.possibleValues[0]
-
-    return hasChanges
-
-
 def findPossibleValues(board: set, row: int, col: int) -> list:
     possibleVals = []
     for x in range(1,10):
@@ -198,6 +164,72 @@ def findPossibleValues(board: set, row: int, col: int) -> list:
             possibleVals.append(x)
 
     return possibleVals
+
+def checkPossibleValues(board: list[list[Cell]], row: int, col: int, hasChanges: bool) -> bool:
+    currentCell = board[row][col]
+    # Check row
+    rowCells = board[row]
+    hasChanges = checkForValuesThatCannotBeInAnyOtherCell(rowCells, currentCell, hasChanges)
+    hasChanges = checkForCellsWithTheSamePossibleNumbers(rowCells, currentCell, hasChanges)
+
+    # Check col
+    colCells = list(row[col] for row in board)
+    hasChanges = checkForValuesThatCannotBeInAnyOtherCell(colCells, currentCell, hasChanges)
+    hasChanges = checkForCellsWithTheSamePossibleNumbers(colCells, currentCell, hasChanges)
+
+    # Check block
+    blockRows = getBlockGrid(row)
+    blockCols = getBlockGrid(col)
+    blockCells = []
+    for blockRow in blockRows:
+        for blockCol in blockCols:
+            blockCells.append(board[blockRow][blockCol])
+    hasChanges = checkForValuesThatCannotBeInAnyOtherCell(blockCells, currentCell, hasChanges)
+    hasChanges = checkForCellsWithTheSamePossibleNumbers(blockCells, currentCell, hasChanges)
+
+    return hasChanges
+
+
+def checkForValuesThatCannotBeInAnyOtherCell(cells: list[Cell], currentCell: Cell, hasChanges: bool) -> bool:
+    # If a possible value is not possible in any other cell, we know it must be the value of this cell
+    possibleValues = currentCell.possibleValues
+
+    for possibleValue in possibleValues:
+        possibleCells = list(filter(lambda c: possibleValue in c.possibleValues, cells))
+
+        if (len(possibleCells) == 1):
+            currentCell.value = possibleValue
+            currentCell.possibleValues = [possibleValue]
+            hasChanges = True
+
+    return hasChanges
+
+def checkForCellsWithTheSamePossibleNumbers(cells: list[Cell], currentCell: Cell, hasChanges: bool) -> bool:
+    # If the same numbers are the only possible numbers in the same cells then we know that the numbers cannot exist in any other cell
+    # Ie if col 1 and col 2 only have the possible numbers 1 & 2, then we know 1 & 2 cannot exist elsewhere in the row.
+    possibleValues = currentCell.possibleValues
+    duplicatesIndexes = []
+    i = 0
+    for cell in cells:
+        if (cell.possibleValues == possibleValues):
+            duplicatesIndexes.append(i)
+        i += 1
+
+    if (len(possibleValues) > 0 and len(possibleValues) == len(duplicatesIndexes)):
+        i = -1
+        for cell in cells:
+            i += 1
+            if (i in duplicatesIndexes):
+                continue
+
+            # Remove the possible values from other cells
+            for possibleVal in possibleValues:
+                if (possibleVal in cell.possibleValues):
+                    cell.possibleValues.remove(possibleVal)
+                    hasChanges = True
+                    if (len(cell.possibleValues) == 1):
+                        cell.value = cell.possibleValues[0]
+    return hasChanges
 
 if __name__ == "__main__":
     generate()
