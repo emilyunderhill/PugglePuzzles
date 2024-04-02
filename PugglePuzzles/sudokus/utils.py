@@ -3,75 +3,81 @@ import copy
 
 class Cell:
     value: int = 0
-    possibleValues: list = []
+    possible_values: list = []
+
+class SudokuObj:
+    solution: list[list[Cell]]
+    starting_grid: list[list[Cell]]
 
 def generate():
     board: list[list[Cell]] = [[Cell() for _ in range(9)] for _ in range(9)]
 
-    boardIsComplete = False
+    board_is_complete = False
 
-    while not boardIsComplete:
-        fillBoard(board)
-        boardIsComplete = isBoardComplete(board)
+    while not board_is_complete:
+        fill_board(board)
+        board_is_complete = is_board_complete(board)
 
-    solutionValues = [[cell.value for cell in row] for row in board]
+    solution_values = [[cell.value for cell in row] for row in board]
 
-    initialBoard = removeNumbers(board)
-    initialValues = [[cell.value for cell in row] for row in initialBoard]
-    print('Solution values: ', solutionValues)
-    print('Initial values: ', initialValues)
+    initial_board = remove_numbers(board)
+    initial_values = [[cell.value for cell in row] for row in initial_board]
+    print('Solution values: ', solution_values)
+    print('Initial values: ', initial_values)
 
-def fillBoard(board: list[list[Cell]]) -> None:
+    return SudokuObj(solution=solution_values, starting_grid=initial_values)
+
+def fill_board(board: list[list[Cell]]) -> None:
     for x in range(9):
         for y in range(9):
             if (board[x][y].value > 0):
                 continue
 
-            val = getValidNumber(board, x, y)
+            val = get_valid_value(board, x, y)
             if (not val):
-                clearGridNums(board, x, y)
-                val = getValidNumber(board, x, y)
+                clear_grid_for_retry(board, x, y)
+                val = get_valid_value(board, x, y)
             else:
                 board[x][y].value = val
 
-def getValidNumber(board: list[list[Cell]], row: int, col: int) -> int|bool:
+def get_valid_value(board: list[list[Cell]], row: int, col: int) -> int|bool:
     options = list(range(1, 10))
     random.shuffle(options)
     for x in options:
-        if (isNumberValid(x, board, row, col)):
+        if (is_value_valid(x, board, row, col)):
             return x
     return False
 
-def isNumberValid(val: int, board: list[list[Cell]], row: int, col: int) -> bool:
-    rowVals = [cell.value for cell in board[row]]
-    if (val in rowVals):
+def is_value_valid(val: int, board: list[list[Cell]], row: int, col: int) -> bool:
+    row_values = [cell.value for cell in board[row]]
+    if (val in row_values):
         return False
 
-    colVals = map(lambda rowX: rowX[col].value, board)
-    if (val in colVals):
+    col_values = map(lambda r: r[col].value, board)
+    if (val in col_values):
         return False
 
-    blockVals = getBlockVals(board, row, col)
-    if (val in blockVals):
+    block_values = get_block_values(board, row, col)
+    if (val in block_values):
         return False
 
     return True
 
 
-def getBlockVals(board: list[list[Cell]], row: int, col: int) -> list[int]:
-    blockRows = getBlockGrid(row)
-    blockCols = getBlockGrid(col)
+def get_block_values(board: list[list[Cell]], row: int, col: int) -> list[int]:
+    block_rows = get_block_grid(row)
+    block_cols = get_block_grid(col)
 
     vals = []
-    for blockRow in blockRows:
-        for blockCol in blockCols:
-            val = board[blockRow][blockCol].value
+    for block_row in block_rows:
+        for block_col in block_cols:
+            val = board[block_row][block_col].value
             vals.append(val)
 
     return vals
 
 
-def getBlockGrid(x: int) -> list[int]:
+def get_block_grid(x: int) -> list[int]:
     if (x < 3):
         return [0, 1, 2]
 
@@ -80,20 +86,20 @@ def getBlockGrid(x: int) -> list[int]:
 
     return [6, 7, 8]
 
-def clearGridNums(board: list[list[Cell]], row: int, col: int) -> None:
+def clear_grid_for_retry(board: list[list[Cell]], row: int, col: int) -> None:
     board[row] = [Cell() for _ in range(9)]
     for x in range(9):
         board[x][col].value = 0
 
-    blockRows = getBlockGrid(row)
-    blockCols = getBlockGrid(col)
+    block_rows = get_block_grid(row)
+    block_cols = get_block_grid(col)
 
-    for blockRow in blockRows:
-        for blockCol in blockCols:
-            board[blockRow][blockCol].value = 0
+    for block_row in block_rows:
+        for block_col in block_cols:
+            board[block_row][block_col].value = 0
 
 
-def isBoardComplete(board: list[list[Cell]]) -> bool:
+def is_board_complete(board: list[list[Cell]]) -> bool:
     for x in range(9):
         for y in range(9):
             if (board[x][y].value == 0):
@@ -101,21 +107,21 @@ def isBoardComplete(board: list[list[Cell]]) -> bool:
 
     return True
 
-def removeNumbers(solutionBoard: list[list[Cell]]) -> list[list[Cell]]:
-    newBoard = copy.deepcopy(solutionBoard)
-    failedAttempt = 0
+def remove_numbers(solution_board: list[list[Cell]]) -> list[list[Cell]]:
+    new_board = copy.deepcopy(solution_board)
+    failed_attempt = 0
 
-    while failedAttempt < 5:
-        tempBoard = removeRandomNumber(newBoard)
-        if (isBoardSolvable(tempBoard)):
-            newBoard = copy.deepcopy(tempBoard)
+    while failed_attempt < 81:
+        temp_board = remove_random_value(new_board)
+        if (is_board_solvable(temp_board)):
+            new_board = copy.deepcopy(temp_board)
         else:
-            failedAttempt += 1
+            failed_attempt += 1
 
-    return newBoard
+    return new_board
 
 
-def removeRandomNumber(board: list[list[Cell]]) -> list[list[Cell]]:
+def remove_random_value(board: list[list[Cell]]) -> list[list[Cell]]:
     val: int = 0
 
     while val == 0:
@@ -123,113 +129,113 @@ def removeRandomNumber(board: list[list[Cell]]) -> list[list[Cell]]:
         col: int = random.randint(0,8)
         val = board[row][col].value
 
-    newBoard = copy.deepcopy(board)
-    newBoard[row][col].value = 0
+    new_board = copy.deepcopy(board)
+    new_board[row][col].value = 0
 
-    return newBoard
+    return new_board
 
-def isBoardSolvable(board: list[list[Cell]]) -> bool:
-    newBoard = copy.deepcopy(board)
-    hasChanges = True
+def is_board_solvable(board: list[list[Cell]]) -> bool:
+    new_board = copy.deepcopy(board)
+    has_changes = True
 
     retry = True
 
     while retry:
-        hasChanges = False
+        has_changes = False
         for x in range(9):
             for y in range(9):
-                if (newBoard[x][y].value > 0):
+                if (new_board[x][y].value > 0):
                     continue
 
-                possibleVals = findPossibleValues(newBoard, x, y)
+                possible_values = find_possible_values(new_board, x, y)
 
-                if possibleVals != newBoard[x][y].possibleValues:
-                    newBoard[x][y].possibleValues = possibleVals
-                    hasChanges = True
+                if possible_values != new_board[x][y].possible_values:
+                    new_board[x][y].possible_values = possible_values
+                    has_changes = True
 
-                if len(possibleVals) == 1:
-                    newBoard[x][y].value = possibleVals[0]
-                    hasChanges = True
+                if len(possible_values) == 1:
+                    new_board[x][y].value = possible_values[0]
+                    has_changes = True
 
-                hasChanges = checkPossibleValues(newBoard, x, y, hasChanges)
-        if not hasChanges:
+                has_changes = check_possible_values(new_board, x, y, has_changes)
+        if not has_changes:
             retry = False
 
-    return isBoardComplete(newBoard)
+    return is_board_complete(new_board)
 
-def findPossibleValues(board: set, row: int, col: int) -> list:
-    possibleVals = []
+def find_possible_values(board: set, row: int, col: int) -> list:
+    possible_values = []
     for x in range(1,10):
-        if (isNumberValid(x, board, row, col)):
-            possibleVals.append(x)
+        if (is_value_valid(x, board, row, col)):
+            possible_values.append(x)
 
-    return possibleVals
+    return possible_values
 
-def checkPossibleValues(board: list[list[Cell]], row: int, col: int, hasChanges: bool) -> bool:
-    currentCell = board[row][col]
+def check_possible_values(board: list[list[Cell]], row: int, col: int, has_changes: bool) -> bool:
+    current_cell = board[row][col]
     # Check row
-    rowCells = board[row]
-    hasChanges = checkForValuesThatCannotBeInAnyOtherCell(rowCells, currentCell, hasChanges)
-    hasChanges = checkForCellsWithTheSamePossibleNumbers(rowCells, currentCell, hasChanges)
+    row_cells = board[row]
+    has_changes = check_for_values_not_in_other_cells(row_cells, current_cell, has_changes)
+    has_changes = check_for_cells_with_the_same_possible_numbers(row_cells, current_cell, has_changes)
 
     # Check col
-    colCells = list(row[col] for row in board)
-    hasChanges = checkForValuesThatCannotBeInAnyOtherCell(colCells, currentCell, hasChanges)
-    hasChanges = checkForCellsWithTheSamePossibleNumbers(colCells, currentCell, hasChanges)
+    col_cells = list(row[col] for row in board)
+    has_changes = check_for_values_not_in_other_cells(col_cells, current_cell, has_changes)
+    has_changes = check_for_cells_with_the_same_possible_numbers(col_cells, current_cell, has_changes)
 
     # Check block
-    blockRows = getBlockGrid(row)
-    blockCols = getBlockGrid(col)
-    blockCells = []
-    for blockRow in blockRows:
-        for blockCol in blockCols:
-            blockCells.append(board[blockRow][blockCol])
-    hasChanges = checkForValuesThatCannotBeInAnyOtherCell(blockCells, currentCell, hasChanges)
-    hasChanges = checkForCellsWithTheSamePossibleNumbers(blockCells, currentCell, hasChanges)
+    block_rows = get_block_grid(row)
+    block_cols = get_block_grid(col)
+    block_cells = []
+    for block_row in block_rows:
+        for block_col in block_cols:
+            block_cells.append(board[block_row][block_col])
+    has_changes = check_for_values_not_in_other_cells(block_cells, current_cell, has_changes)
+    has_changes = check_for_cells_with_the_same_possible_numbers(block_cells, current_cell, has_changes)
 
-    return hasChanges
+    return has_changes
 
 
-def checkForValuesThatCannotBeInAnyOtherCell(cells: list[Cell], currentCell: Cell, hasChanges: bool) -> bool:
+def check_for_values_not_in_other_cells(cells: list[Cell], current_cell: Cell, has_changes: bool) -> bool:
     # If a possible value is not possible in any other cell, we know it must be the value of this cell
-    possibleValues = currentCell.possibleValues
+    possible_values = current_cell.possible_values
 
-    for possibleValue in possibleValues:
-        possibleCells = list(filter(lambda c: possibleValue in c.possibleValues, cells))
+    for possible_value in possible_values:
+        possible_cells = list(filter(lambda c: possible_value in c.possible_values, cells))
 
-        if (len(possibleCells) == 1):
-            currentCell.value = possibleValue
-            currentCell.possibleValues = [possibleValue]
-            hasChanges = True
+        if (len(possible_cells) == 1):
+            current_cell.value = possible_value
+            current_cell.possible_values = [possible_value]
+            has_changes = True
 
-    return hasChanges
+    return has_changes
 
-def checkForCellsWithTheSamePossibleNumbers(cells: list[Cell], currentCell: Cell, hasChanges: bool) -> bool:
+def check_for_cells_with_the_same_possible_numbers(cells: list[Cell], current_cell: Cell, has_changes: bool) -> bool:
     # If the same numbers are the only possible numbers in the same cells then we know that the numbers cannot exist in any other cell
     # Ie if col 1 and col 2 only have the possible numbers 1 & 2, then we know 1 & 2 cannot exist elsewhere in the row.
-    possibleValues = currentCell.possibleValues
-    duplicatesIndexes = []
+    possible_values = current_cell.possible_values
+    duplicate_indexes = []
     i = 0
     for cell in cells:
-        if (cell.possibleValues == possibleValues):
-            duplicatesIndexes.append(i)
+        if (cell.possible_values == possible_values):
+            duplicate_indexes.append(i)
         i += 1
 
-    if (len(possibleValues) > 0 and len(possibleValues) == len(duplicatesIndexes)):
+    if (len(possible_values) > 0 and len(possible_values) == len(duplicate_indexes)):
         i = -1
         for cell in cells:
             i += 1
-            if (i in duplicatesIndexes):
+            if (i in duplicate_indexes):
                 continue
 
             # Remove the possible values from other cells
-            for possibleVal in possibleValues:
-                if (possibleVal in cell.possibleValues):
-                    cell.possibleValues.remove(possibleVal)
-                    hasChanges = True
-                    if (len(cell.possibleValues) == 1):
-                        cell.value = cell.possibleValues[0]
-    return hasChanges
+            for possible_value in possible_values:
+                if (possible_value in cell.possible_values):
+                    cell.possible_values.remove(possible_value)
+                    has_changes = True
+                    if (len(cell.possible_values) == 1):
+                        cell.value = cell.possible_values[0]
+    return has_changes
 
 if __name__ == "__main__":
     generate()
