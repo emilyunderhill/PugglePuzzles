@@ -34,6 +34,6 @@ class UserSudoku(models.Model):
     duration = models.BigIntegerField(
         default=0
     )
-    hintsCount = models.IntegerField(
+    hints_count = models.IntegerField(
         default=0
     )

@@ -26,8 +26,6 @@ def generate():
 
     initial_board = remove_numbers(board)
     initial_values = [[cell.value for cell in row] for row in initial_board]
-    # print('Solution values: ', solution_values)
-    # print('Initial values: ', initial_values)
 
     sudoku_obj = SudokuObj(solution=solution_values, starting_grid=initial_values)
 
