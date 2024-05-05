@@ -37,3 +37,7 @@ class UserSudoku(models.Model):
     hints_count = models.IntegerField(
         default=0
     )
+    progress = models.CharField(
+        max_length=300,
+        null=True
+    )
