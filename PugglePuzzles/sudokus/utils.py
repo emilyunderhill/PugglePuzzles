@@ -6,8 +6,12 @@ class Cell:
     possible_values: list = []
 
 class SudokuObj:
-    solution: list[list[Cell]]
-    starting_grid: list[list[Cell]]
+    solution: list[list[int]]
+    starting_grid: list[list[int]]
+
+    def __init__(self, solution, starting_grid):
+        self.solution = solution
+        self.starting_grid = starting_grid
 
 def generate():
     board: list[list[Cell]] = [[Cell() for _ in range(9)] for _ in range(9)]
@@ -22,10 +26,12 @@ def generate():
 
     initial_board = remove_numbers(board)
     initial_values = [[cell.value for cell in row] for row in initial_board]
-    print('Solution values: ', solution_values)
-    print('Initial values: ', initial_values)
+    # print('Solution values: ', solution_values)
+    # print('Initial values: ', initial_values)
 
-    return SudokuObj(solution=solution_values, starting_grid=initial_values)
+    sudoku_obj = SudokuObj(solution=solution_values, starting_grid=initial_values)
+
+    return sudoku_obj
 
 def fill_board(board: list[list[Cell]]) -> None:
     for x in range(9):

@@ -1,12 +1,16 @@
 from django.db import models
-from main.models import Puzzle
 from sudokus.utils import generate
 import json
 
-class Sudoku(Puzzle):
+class Sudoku(models.Model):
+    start = models.CharField(max_length=300, default="[[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]")
+    solution = models.CharField(max_length=300, default="[[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]")
+
     def create():
         sudoku_obj = generate()
-        starting_grid = json.dump(sudoku_obj.starting_grid)
-        solution = json.dump(sudoku_obj.solution)
-        sudoku = Sudoku(starting_grid, solution)
+        sudoku = Sudoku()
+        start_string = json.dumps(sudoku_obj.starting_grid)
+        solution_string = json.dumps(sudoku_obj.solution)
+        sudoku.start = start_string
+        sudoku.solution = solution_string
         sudoku.save()
