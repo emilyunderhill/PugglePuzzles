@@ -2,9 +2,7 @@ from rest_framework.views import APIView
 from django.http import HttpRequest, JsonResponse
 from sudokus.models import Sudoku
 
-KEY_DATE = 'date'
 KEY_ID = 'id'
-KEY_START = 'start'
 
 class List(APIView):
     def get(self, request: HttpRequest) -> JsonResponse:
