@@ -1,5 +1,6 @@
 from django.db import models
 from sudokus.utils import generate
+from main.models import IPAddressUser
 import json
 
 class Sudoku(models.Model):
@@ -14,3 +15,25 @@ class Sudoku(models.Model):
         sudoku.start = start_string
         sudoku.solution = solution_string
         sudoku.save()
+
+class UserSudoku(models.Model):
+    user = models.ForeignKey(
+        IPAddressUser,
+        on_delete=models.CASCADE,
+    )
+    sudoku = models.ForeignKey(
+        Sudoku,
+        on_delete=models.CASCADE
+    )
+    completed = models.BooleanField(
+        default=False
+    )
+    start = models.DateTimeField(
+        auto_now=True
+    )
+    duration = models.BigIntegerField(
+        default=0
+    )
+    hintsCount = models.IntegerField(
+        default=0
+    )
