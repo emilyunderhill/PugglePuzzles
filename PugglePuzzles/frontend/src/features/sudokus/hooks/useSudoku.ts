@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../../store"
-import { SudokuState, selectSudoku, selectSudokuState } from "../redux/sudokuSlice"
+import { SudokuState, deselectCell, selectCell, selectSudoku, selectSudokuState } from "../redux/sudokuSlice"
 
 type SelectSudokuArg = {
   id: number,
@@ -11,14 +11,15 @@ const useSudoku = () => {
   const dispatch = useAppDispatch()
 
   const handleSelectSudoku = (arg: SelectSudokuArg) => dispatch(selectSudoku(arg))
+  const handleSelectCell = (arg: {rowIndex: number, colIndex: number}) => dispatch(selectCell(arg))
+  const handleDeselectCell = () => dispatch(deselectCell())
 
   return {
-    state: {
-      selectedDate: state.selectedDate,
-      selectedId: state.selectedId
-    },
+    state,
     actions: {
-      selectSudoku: handleSelectSudoku
+      selectSudoku: handleSelectSudoku,
+      selectCell: handleSelectCell,
+      deselectCell: handleDeselectCell,
     }
   }
 }
