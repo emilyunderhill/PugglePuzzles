@@ -1,0 +1,42 @@
+@import './colors';
+
+.paragraph {
+  text-align: justify;
+  text-justify: inter-word;
+  padding-top: '10px';
+  color: $text-light;
+}
+
+.link {
+  color: $border;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: small;
+
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
+.primary {
+  color: $text;
+}
+
+.warning {
+  color: $progress;
+}
+
+.error {
+  color: $error;
+}
+
+.heading {
+  color: $text;
+}
+
+.helpertext {
+  margin-top: 5px;
+  padding-top: 0;
+  font-size: x-small;
+}

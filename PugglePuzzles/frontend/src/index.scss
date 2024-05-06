@@ -1,0 +1,52 @@
+
+@import './styles/_colors.scss';
+@import './styles/texts.scss';
+@import './styles/formats.scss';
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;1,100;1,300;1,400;1,500&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Roboto';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: $background;
+  color: $text;
+}
+
+code {
+  font-family: 'Roboto';
+}
+
+h1 {
+  font-weight: 500;
+  font-size: x-large;
+}
+
+h2 {
+  font-weight: 500;
+  font-size: medium;
+  margin: 0;
+  padding: 0;
+}
+
+p {
+  font-weight: 300;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+a {
+  color: $border;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: small;
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
+svg {
+  max-width: 100%;
+  vertical-align: middle;
+}

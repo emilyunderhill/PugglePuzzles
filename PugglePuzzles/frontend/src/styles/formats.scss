@@ -1,0 +1,234 @@
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.grid-5 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+//------- Margin & Padding ------------//
+$gap-small: 10px;
+$gap-medium: 20px;
+$gap-large: 30px;
+
+.ml-auto {
+  margin-left: auto;
+}
+
+.mr-auto {
+  margin-right: auto;
+}
+
+.m-sm {
+  margin: $gap-small;
+}
+
+.ml-sm {
+  margin-left: $gap-small;
+}
+
+.mr-sm {
+  margin-right: $gap-small;
+}
+
+.mt-sm {
+  margin-top: $gap-small;
+}
+
+.mb-sm {
+  margin-bottom: $gap-small;
+}
+
+.p-sm {
+  padding: $gap-small;
+}
+
+.pl-sm {
+  padding-left: $gap-small;
+}
+
+.pr-sm {
+  padding-right: $gap-small;
+}
+
+.pt-sm {
+  padding-top: $gap-small;
+}
+
+.pb-sm {
+  padding-bottom: $gap-small;
+}
+
+.m-med {
+  margin: $gap-medium;
+}
+
+.ml-med {
+  margin-left: $gap-medium;
+}
+
+.mr-med {
+  margin-right: $gap-medium;
+}
+
+.mt-med {
+  margin-top: $gap-medium;
+}
+
+.mb-med {
+  margin-bottom: $gap-medium;
+}
+
+.p-med {
+  padding: $gap-medium;
+}
+
+.pl-med {
+  padding-left: $gap-medium;
+}
+
+.pr-med {
+  padding-right: $gap-medium;
+}
+
+.pt-med {
+  padding-top: $gap-medium;
+}
+
+.pb-med {
+  padding-bottom: $gap-medium;
+}
+
+.m-l {
+  margin: $gap-large;
+}
+
+.ml-l {
+  margin-left: $gap-large;
+}
+
+.mr-l {
+  margin-right: $gap-large;
+}
+
+.mt-l {
+  margin-top: $gap-large;
+}
+
+.mb-l {
+  margin-bottom: $gap-large;
+}
+
+.p-l {
+  padding: $gap-large;
+}
+
+.pl-l {
+  padding-left: $gap-large;
+}
+
+.pr-l {
+  padding-right: $gap-large;
+}
+
+.pt-l {
+  padding-top: $gap-large;
+}
+
+.pb-l {
+  padding-bottom: $gap-large;
+}
+
+// Zero margin or padding overrides other settings
+.m-0 {
+  margin: 0 !important;
+}
+
+.m-0 {
+  margin-left: 0 !important;
+}
+
+.mr-0 {
+  margin-right: 0 !important;
+}
+
+.mt-0 {
+  margin-top: 0 !important;
+}
+
+.mb-0 {
+  margin-bottom: 0 !important;
+}
+
+.p-0 {
+  padding: 0 !important;
+}
+
+.pl-0 {
+  padding-left: 0 !important;
+}
+
+.pr-0 {
+  padding-right: 0 !important;
+}
+
+.pt-0 {
+  padding-top: 0 !important;
+}
+
+.pb-0 {
+  padding-bottom: 0 !important;
+}
+
+// ------ Widths and heights ------
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.w-half {
+  width: 50%;
+}
+
+.h-half {
+  height: 50%;
+}
+
+// ------ Positions ------
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}

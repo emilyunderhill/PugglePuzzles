@@ -1,11 +1,12 @@
 import { FC } from "react";
 import SudokuList from "./components/sudokuList";
+import "./style.scss";
+import PageContainer from "../../components/PageContainer";
 
 const Sudokus: FC = () => {
-  return <div>
-    Hello World!
+  return <PageContainer>
     <SudokuList />
-  </div>
+  </PageContainer>
 }
 
 export default Sudokus

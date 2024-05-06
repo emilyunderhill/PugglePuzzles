@@ -17,7 +17,7 @@ export type SudokuGridRow = SudokuCell[]
 export type SudokuGrid = SudokuGridRow[]
 
 export type GetGridArg = {
-  date?: string
+  date: string | null
 }
 
 export type GetListArg = GetGridArg

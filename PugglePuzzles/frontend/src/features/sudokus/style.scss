@@ -1,0 +1,23 @@
+@import '../../styles/colors';
+
+.sudoku-list-item {
+  border: 3px solid $border;
+  border-radius: 10px;
+  cursor: pointer;
+  align-items: center;
+  text-align: center;
+  padding: 5px;
+  display: inline-block;
+}
+
+.solved {
+  border-color: $success !important;
+}
+
+.in-progress {
+  border-color: $progress !important;
+}
+
+.selected {
+  border-color: $text;
+}
