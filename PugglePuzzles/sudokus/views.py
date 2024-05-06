@@ -69,6 +69,7 @@ class Start(APIView):
 
         return JsonResponse({
             'id': sudoku.pk,
+            'date': datetime.date.strftime(date, "%d-%m-%Y"),
             'board': grid_response
         }, safe=False)
 
