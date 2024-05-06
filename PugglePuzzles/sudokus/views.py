@@ -3,15 +3,24 @@ from django.http import HttpRequest, JsonResponse
 from sudokus.models import Sudoku, UserSudoku
 from main.models import IPAddressUser
 from main.utils import get_ip_address_user_from_request
-import json
+import json, datetime
+from datetime import date
 
 KEY_ID = 'id'
+KEY_DATE = 'date'
 
 class List(APIView):
     def get(self, request: HttpRequest) -> JsonResponse:
         user = get_ip_address_user_from_request(request)
 
-        sudokus = Sudoku.objects.order_by('-id')[:10]
+        date_str = request.GET.get(KEY_DATE)
+        if (not date_str):
+            date = datetime.date.today()
+        else:
+            date = datetime.datetime.strptime(date_str, "%d-%m-%Y")
+
+
+        sudokus: list[Sudoku] = Sudoku.objects.find_all_by_date(date)
 
         response = []
         for sudoku in sudokus:
@@ -19,14 +28,16 @@ class List(APIView):
                 response.append({
                     'id': sudoku.pk,
                     'solved': False,
-                    'inProgress': False
+                    'inProgress': False,
+                    'date': datetime.date.strftime(sudoku.date, "%d-%m-%Y")
                 })
             else:
                 user_sudoku = UserSudoku.objects.get(user=user.pk, sudoku=sudoku.pk)
                 response.append({
                     'id': sudoku.pk,
                     'solved': user_sudoku.completed,
-                    'inProgress': not user_sudoku.completed
+                    'inProgress': not user_sudoku.completed,
+                    'date': datetime.date.strftime(sudoku.date, "%d-%m-%Y")
                 })
 
 
@@ -38,10 +49,13 @@ class Start(APIView):
 
         user = get_ip_address_user_from_request(request)
 
-        try:
-            sudoku = Sudoku.objects.get(pk=pk)
-        except Sudoku.DoesNotExist:
-            return JsonResponse({"error": "Sudoku could not be found"}, status=404)
+        date_str = request.GET.get(KEY_DATE)
+        if (not date_str):
+            date = datetime.date.today()
+        else:
+            date = datetime.datetime.strptime(date_str, "%d-%m-%Y")
+
+        sudoku: Sudoku = Sudoku.objects.find_or_create_by_date(date)
 
         starting_board = json.loads(sudoku.start)
 
