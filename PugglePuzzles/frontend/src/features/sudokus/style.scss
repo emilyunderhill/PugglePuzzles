@@ -21,3 +21,50 @@
 .selected {
   border-color: $text;
 }
+
+.sudoku-cell {
+  width: 40px !important;
+  height: 40px !important;
+  border: 1px solid $border-light;
+  align-items: center;
+  text-align: center;
+  margin: 0 !important;
+}
+
+.fixed-value {
+ font-size: large;
+ color: $text;
+ font-weight: bolder;
+}
+
+.user-value {
+  font-size: large;
+  color: $text-light;
+  font-weight: bolder;
+}
+
+.possible-values {
+  grid-template-columns: 1fr 1fr 1fr;
+  font-size: x-small;
+  font-weight: $text-light;
+}
+
+.active-cell {
+  background-color: $background;
+}
+
+.sudoku-board {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border: 3px solid $text;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.sudoku-block {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border: 1px solid $text;
+  overflow: hidden;
+}
+

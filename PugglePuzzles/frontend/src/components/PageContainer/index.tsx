@@ -1,6 +1,6 @@
 import React, { type FC, type ReactNode } from "react";
-import useIsMobile from "../../hooks/useIsMobile"
 import "./style.scss"
+import useIsMobile from "../../hooks/useIsMobile";
 
 interface Props {
   children: ReactNode;

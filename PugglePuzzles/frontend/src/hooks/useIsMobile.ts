@@ -14,4 +14,4 @@ const useIsMobile = () => {
   };
 };
 
-export default useIsMobile;
+export default useIsMobile
