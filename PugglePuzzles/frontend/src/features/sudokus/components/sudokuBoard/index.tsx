@@ -5,10 +5,10 @@ import Cell, { CellProps } from "./components/Cell"
 import Block, { BlockProps } from "./components/Block"
 
 const SudokuBoard: FC = () => {
-  const { state: { selectedDate }} = useSudoku()
-  const { data, isLoading, isError } = useGetSudokuQuery({ date: selectedDate })
+  const { state: { selectedDate, board }} = useSudoku()
+  const { isLoading, isError } = useGetSudokuQuery({ date: selectedDate })
 
-  if (!data && isLoading) {
+  if (isLoading) {
     return <div>
       Loading
     </div>
@@ -19,12 +19,6 @@ const SudokuBoard: FC = () => {
       Error
     </div>
   }
-
-  if (!data){
-    return null
-  }
-
-  const board = data.board
 
   const getBlocks = () => {
     const blocks = [[], [], [], [], [], [], [], [], []] as CellProps[][]
@@ -85,19 +79,6 @@ const SudokuBoard: FC = () => {
 
     return blocks
   }
-
-  // const getCells = () => {
-  //   const cells = []
-  //   for (let rowI = 0; rowI < board.length; rowI ++) {
-  //     const row = board[rowI]
-  //     for (let colI = 0; colI < row.length; colI ++) {
-  //       const cell = row[colI]
-  //       cells.push(<Cell cell={cell} rowIndex={rowI} colIndex={colI} />)
-  //     }
-  //   }
-
-  //   return cells
-  // }
 
   return <div className="sudoku-board">
     {getBlocks().map((block) => <Block cells={block} />)}
