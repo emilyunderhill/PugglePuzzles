@@ -78,6 +78,29 @@ class Save(APIView):
 
         return JsonResponse({'success': True})
 
+class Check(APIView):
+    def post(self, request: HttpRequest) -> JsonResponse:
+        body = json.loads(request.body)
+        sudoku_pk = body[KEY_ID]
+        board = body[KEY_BOARD]
+
+        sudoku = Sudoku.objects.get(pk=sudoku_pk)
+        solution = sudoku.solution
+
+        errors = []
+        for row_i, row in enumerate(board):
+            for col_i, cell in enumerate(row):
+                if (not cell.value):
+                    continue
+                if (cell.value == solution[row_i][col_i]):
+                    continue
+                errors.append({
+                    'rowIndex': row_i,
+                    'colIndex': col_i
+                })
+
+        return JsonResponse(errors)
+
 def map_row_to_response_board(row):
     return list(map(lambda cell: {
         'value': cell,

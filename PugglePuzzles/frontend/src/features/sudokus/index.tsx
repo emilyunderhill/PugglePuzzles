@@ -25,7 +25,6 @@ const Sudokus: FC = () => {
   } = useSudoku()
 
   const [hasChanged, setHasChanged] = useState<boolean>(false)
-  const debouncedHasChanged = useDebounce({ value: hasChanged, delay: 500})
 
   const [saveProgress] = useSaveProgressMutation()
 
@@ -38,13 +37,13 @@ const Sudokus: FC = () => {
   }, [])
 
   useEffect(() => {
-    if (!debouncedHasChanged || !selectedId) {
+    if (!hasChanged || !selectedId) {
       return
     }
 
     saveProgress({id: selectedId, board})
     setHasChanged(false)
-  }, [debouncedHasChanged])
+  }, [hasChanged])
 
   const handleOnKeyDown = (event: KeyboardEvent) => {
     const key = event.key
