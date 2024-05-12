@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { CheckGridRequest, CheckGridResponse, GetGridArg, GetListArg, SudokuGridResponse, SudokuList } from './types'
+import { CheckGridRequest, CheckGridResponse, GetGridArg, GetListArg, SaveProgressRequest, SudokuGridResponse, SudokuList } from './types'
 
 export const reducerPath = 'sudokus'
 
@@ -15,10 +15,22 @@ export const sudokusApi = createApi({
     getSudoku: builder.query<SudokuGridResponse, GetGridArg>({
       query: ({ date }) => date ? `/get?date=${date}` : '/get'
     }),
+    saveProgress: builder.mutation<void, SaveProgressRequest>({
+      query: ({ id, board }) => {
+        return {
+          url: `/save`,
+          method: 'POST',
+          body: {
+            id,
+            board
+          }
+        }
+      }
+    }),
     checkSolution: builder.mutation<CheckGridResponse, CheckGridRequest>({
       query: ({ id, board }) => {
         return {
-          url: `sudoku/check?id=${id}`,
+          url: `/check`,
           method: 'POST',
           body: {
             id,
@@ -31,4 +43,4 @@ export const sudokusApi = createApi({
   }),
 })
 
-export const { useListSudokusQuery, useGetSudokuQuery, useCheckSolutionMutation } = sudokusApi
+export const { useListSudokusQuery, useGetSudokuQuery, useCheckSolutionMutation, useSaveProgressMutation } = sudokusApi

@@ -56,10 +56,13 @@ const sudokuSlice = createSlice({
       state.selectedCellRowIndex = null
     },
     toggleUsePencil: (state) => {
-      state.usePencil = !state.usePencil
+      state.usePencil = state.usePencil ? false : true
     },
     setCellValue: (state, action) => {
       if (state.selectedCellRowIndex === null || state.selectedCellColIndex === null) {
+        return
+      }
+      if (state.board[state.selectedCellRowIndex][state.selectedCellColIndex].isFixed){
         return
       }
       state.board[state.selectedCellRowIndex][state.selectedCellColIndex].value = action.payload
@@ -68,18 +71,26 @@ const sudokuSlice = createSlice({
       if (!state.selectedCellRowIndex || !state.selectedCellColIndex) {
         return
       }
+      if (state.board[state.selectedCellRowIndex][state.selectedCellColIndex].isFixed){
+        return
+      }
       state.board[state.selectedCellRowIndex][state.selectedCellColIndex].value = 0
     },
     toggleCellPossibleValue: (state, action) => {
       if (state.selectedCellRowIndex === null || state.selectedCellColIndex === null) {
         return
       }
+      if (state.board[state.selectedCellRowIndex][state.selectedCellColIndex].isFixed){
+        return
+      }
+
       const possibleValues = state.board[state.selectedCellRowIndex][state.selectedCellColIndex].possibleValues
       const possibleValue = action.payload
       const index = possibleValues.findIndex((value) => value === possibleValue)
 
       if (index < 0){
-        state.board[state.selectedCellRowIndex][state.selectedCellColIndex].possibleValues.push(possibleValue)
+        possibleValues.push(possibleValue)
+        state.board[state.selectedCellRowIndex][state.selectedCellColIndex].possibleValues = possibleValues.sort()
         return
       }
 
@@ -87,6 +98,9 @@ const sudokuSlice = createSlice({
     },
     clearCellPossibleValues: (state) => {
       if (state.selectedCellRowIndex === null || state.selectedCellColIndex === null) {
+        return
+      }
+      if (state.board[state.selectedCellRowIndex][state.selectedCellColIndex].isFixed){
         return
       }
       state.board[state.selectedCellRowIndex][state.selectedCellColIndex].possibleValues = []
@@ -118,12 +132,38 @@ const sudokuSlice = createSlice({
       }
       const currentRowIndex = state.selectedCellRowIndex
       state.selectedCellRowIndex = currentRowIndex === 8 ? 0 : currentRowIndex + 1
+    },
+    onChangeValue: (state, action) => {
+      if (state.usePencil) {
+        sudokuSlice.caseReducers.toggleCellPossibleValue(state, action)
+        return
+      }
+
+      sudokuSlice.caseReducers.setCellValue(state, action)
+    },
+    onClearCell: (state) => {
+      if (!state.selectedCellRowIndex || !state.selectedCellColIndex) {
+        return
+      }
+
+      const selectedCell = state.board[state.selectedCellRowIndex][state.selectedCellColIndex]
+      if (selectedCell.isFixed){
+        return
+      }
+
+      if (!selectedCell.value) {
+        sudokuSlice.caseReducers.clearCellPossibleValues(state)
+        return
+      }
+
+      sudokuSlice.caseReducers.removeCellValue(state)
     }
   },
   extraReducers: (builder) => {
     builder.addMatcher(sudokusApi.endpoints.getSudoku.matchFulfilled, (state, action) => {
       const boardResponse = action.payload.board
       state.board = [...boardResponse]
+      state.selectedId = action.payload.id
     })
   }
 })
@@ -135,14 +175,12 @@ export const {
   selectCell,
   deselectCell,
   toggleUsePencil,
-  setCellValue,
-  removeCellValue,
-  toggleCellPossibleValue,
-  clearCellPossibleValues,
   moveLeft,
   moveRight,
   moveUp,
   moveDown,
+  onChangeValue,
+  onClearCell,
 } = sudokuSlice.actions
 
 export const selectSudokuState = (state: RootState) => state[name] as SudokuState

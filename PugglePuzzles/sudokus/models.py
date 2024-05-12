@@ -16,8 +16,8 @@ class SudokuManager(models.Manager):
         return self.filter(date__month=month).order_by('-date')
 
 class Sudoku(models.Model):
-    start = models.CharField(max_length=300, default="[[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]")
-    solution = models.CharField(max_length=300, default="[[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]")
+    start = models.JSONField()
+    solution = models.JSONField()
     date = models.DateField(null=True, default=None)
 
     objects = SudokuManager()
@@ -27,8 +27,8 @@ class Sudoku(models.Model):
 
         sudoku_obj = generate()
         sudoku = Sudoku()
-        start_string = json.dumps(sudoku_obj.starting_grid)
-        solution_string = json.dumps(sudoku_obj.solution)
+        start_string = sudoku_obj.starting_grid
+        solution_string = sudoku_obj.solution
         sudoku.start = start_string
         sudoku.solution = solution_string
         sudoku.date = date
@@ -47,7 +47,7 @@ class UserSudoku(models.Model):
         default=False
     )
     start = models.DateTimeField(
-        auto_now=True
+        auto_now_add=True
     )
     duration = models.BigIntegerField(
         default=0
@@ -55,7 +55,4 @@ class UserSudoku(models.Model):
     hints_count = models.IntegerField(
         default=0
     )
-    progress = models.CharField(
-        max_length=300,
-        null=True
-    )
+    progress = models.JSONField(default=list)

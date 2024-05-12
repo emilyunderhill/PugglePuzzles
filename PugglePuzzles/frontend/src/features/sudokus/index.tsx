@@ -1,41 +1,58 @@
-import { FC, useEffect } from "react"
+import { FC, useEffect, useState } from "react"
 import SudokuList from "./components/sudokuList"
 import "./style.scss"
 import PageContainer from "../../components/PageContainer"
 import SudokuBoard from "./components/sudokuBoard"
 import useSudoku from "./hooks/useSudoku"
+import { useSaveProgressMutation } from "./redux/sudokuApi"
+import useDebounce from "../../hooks/useDebounce"
 
 const Sudokus: FC = () => {
   const {
     state: {
-      selectedCellColIndex,
-      selectedCellRowIndex,
-      usePencil,
+      selectedId,
+      board,
     },
     actions: {
-      clearCellPossibleValues,
-      removeCellValue,
-      setCellValue,
-      toggleCellPossibleValue,
       moveDown,
       moveLeft,
       moveRight,
       moveUp,
       toggleUsePencil,
+      onChangeValue,
+      onClearCell,
     }
   } = useSudoku()
 
+  const [hasChanged, setHasChanged] = useState<boolean>(false)
+  const debouncedHasChanged = useDebounce({ value: hasChanged, delay: 500})
+
+  const [saveProgress] = useSaveProgressMutation()
+
   useEffect(() => {
     document.addEventListener('keydown', handleOnKeyDown)
+    document.body.style.overflow = "hidden";
+    return () => {
+        document.body.style.overflow = "scroll"
+    }
   }, [])
+
+  useEffect(() => {
+    if (!debouncedHasChanged || !selectedId) {
+      return
+    }
+
+    saveProgress({id: selectedId, board})
+    setHasChanged(false)
+  }, [debouncedHasChanged])
 
   const handleOnKeyDown = (event: KeyboardEvent) => {
     const key = event.key
-    console.log({key})
     switch (key) {
         case 'Backspace':
         case 'Delete':
-          usePencil ? clearCellPossibleValues() : removeCellValue()
+          onClearCell()
+          setHasChanged(true)
           return
         case 'ArrowLeft':
           moveLeft()
@@ -53,10 +70,11 @@ const Sudokus: FC = () => {
           toggleUsePencil()
           return
         default:
-          if (isNaN(Number(key))) {
+          if (isNaN(Number(key)) || key === '0') {
             return
           }
-          usePencil ? toggleCellPossibleValue(Number(key)) : setCellValue(Number(key))
+          onChangeValue(Number(key))
+          setHasChanged(true)
       }
   }
 

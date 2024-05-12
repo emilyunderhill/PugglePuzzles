@@ -30,6 +30,7 @@
   text-align: center;
   margin: 0 !important;
   cursor: pointer;
+  padding: 0 !important;
 }
 
 .fixed-value {
@@ -45,9 +46,15 @@
 }
 
 .possible-values {
+  display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   font-size: x-small;
   font-weight: $text-light;
+  margin: 1px !important;
+}
+
+.possible-value {
+  margin: 0 !important;
 }
 
 .active-cell {

@@ -42,3 +42,5 @@ export type CheckGridResponse = {
   id: number
   errors: CellError[]
 }
+
+export type SaveProgressRequest = CheckGridRequest
